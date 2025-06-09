@@ -1,5 +1,3 @@
-
-
 (function() {
   "use strict";
 
@@ -20,31 +18,37 @@
    * Mobile nav toggle
    */
   const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
+  const body = document.body;
+  const navMenu = document.getElementById('navmenu');
 
-  function mobileNavToogle() {
-    document.querySelector('body').classList.toggle('mobile-nav-active');
+  function mobileNavToggle() {
+    body.classList.toggle('mobile-nav-active');
     mobileNavToggleBtn.classList.toggle('bi-list');
     mobileNavToggleBtn.classList.toggle('bi-x');
   }
-  mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+
+  if (mobileNavToggleBtn) {
+    mobileNavToggleBtn.addEventListener('click', mobileNavToggle);
+  }
 
   /**
    * Hide mobile nav on same-page/hash links
    */
-  document.querySelectorAll('#navmenu a').forEach(navmenu => {
-    navmenu.addEventListener('click', () => {
-      if (document.querySelector('.mobile-nav-active')) {
-        mobileNavToogle();
-      }
+  if (navMenu) {
+    navMenu.querySelectorAll('a').forEach(navLink => {
+      navLink.addEventListener('click', () => {
+        if (body.classList.contains('mobile-nav-active')) {
+          mobileNavToggle();
+        }
+      });
     });
-
-  });
+  }
 
   /**
-   * Toggle mobile nav dropdowns
+   * Toggle mobile nav dropdowns (if you have dropdowns)
    */
-  document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-    navmenu.addEventListener('click', function(e) {
+  document.querySelectorAll('.navmenu .toggle-dropdown').forEach(toggleBtn => {
+    toggleBtn.addEventListener('click', function(e) {
       e.preventDefault();
       this.parentNode.classList.toggle('active');
       this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
@@ -72,13 +76,16 @@
       window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
     }
   }
-  scrollTop.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+
+  if (scrollTop) {
+    scrollTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     });
-  });
+  }
 
   window.addEventListener('load', toggleScrollTop);
   document.addEventListener('scroll', toggleScrollTop);
@@ -94,6 +101,7 @@
       mirror: false
     });
   }
+
   window.addEventListener('load', aosInit);
 
   /**
