@@ -1,58 +1,47 @@
-(function() {
+(function () {
   "use strict";
 
   /**
    * Apply .scrolled class to the body as the page is scrolled down
    */
   function toggleScrolled() {
-    const selectBody = document.querySelector('body');
-    const selectHeader = document.querySelector('#header');
-    if (!selectHeader.classList.contains('scroll-up-sticky') && !selectHeader.classList.contains('sticky-top') && !selectHeader.classList.contains('fixed-top')) return;
-    window.scrollY > 100 ? selectBody.classList.add('scrolled') : selectBody.classList.remove('scrolled');
+    const body = document.querySelector('body');
+    const header = document.querySelector('#header');
+    if (!header.classList.contains('scroll-up-sticky') && !header.classList.contains('sticky-top') && !header.classList.contains('fixed-top')) return;
+    window.scrollY > 100 ? body.classList.add('scrolled') : body.classList.remove('scrolled');
   }
 
   document.addEventListener('scroll', toggleScrolled);
   window.addEventListener('load', toggleScrolled);
 
   /**
-   * Mobile nav toggle
+   * Slide-Out Mobile Nav Toggle
    */
-  const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
-  const body = document.body;
-  const navMenu = document.getElementById('navmenu');
+  const navToggleBtn = document.getElementById('navToggle');
+  const navCloseBtn = document.getElementById('navClose');
+  const navmenu = document.getElementById('navmenu');
 
-  function mobileNavToggle() {
-    body.classList.toggle('mobile-nav-active');
-    mobileNavToggleBtn.classList.toggle('bi-list');
-    mobileNavToggleBtn.classList.toggle('bi-x');
-  }
-
-  if (mobileNavToggleBtn) {
-    mobileNavToggleBtn.addEventListener('click', mobileNavToggle);
-  }
-
-  /**
-   * Hide mobile nav on same-page/hash links
-   */
-  if (navMenu) {
-    navMenu.querySelectorAll('a').forEach(navLink => {
-      navLink.addEventListener('click', () => {
-        if (body.classList.contains('mobile-nav-active')) {
-          mobileNavToggle();
-        }
-      });
+  if (navToggleBtn && navmenu) {
+    navToggleBtn.addEventListener('click', () => {
+      navmenu.classList.add('show');
+      document.body.classList.add('mobile-nav-active');
     });
   }
 
-  /**
-   * Toggle mobile nav dropdowns (if you have dropdowns)
-   */
-  document.querySelectorAll('.navmenu .toggle-dropdown').forEach(toggleBtn => {
-    toggleBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      this.parentNode.classList.toggle('active');
-      this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
-      e.stopImmediatePropagation();
+  if (navCloseBtn && navmenu) {
+    navCloseBtn.addEventListener('click', () => {
+      navmenu.classList.remove('show');
+      document.body.classList.remove('mobile-nav-active');
+    });
+  }
+
+  // Close mobile nav when a link is clicked
+  document.querySelectorAll('#navmenu a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (document.body.classList.contains('mobile-nav-active')) {
+        navmenu.classList.remove('show');
+        document.body.classList.remove('mobile-nav-active');
+      }
     });
   });
 
@@ -69,7 +58,7 @@
   /**
    * Scroll top button
    */
-  let scrollTop = document.querySelector('.scroll-top');
+  const scrollTop = document.querySelector('.scroll-top');
 
   function toggleScrollTop() {
     if (scrollTop) {
@@ -91,7 +80,7 @@
   document.addEventListener('scroll', toggleScrollTop);
 
   /**
-   * Animation on scroll function and init
+   * Animation on scroll
    */
   function aosInit() {
     AOS.init({
@@ -101,17 +90,14 @@
       mirror: false
     });
   }
-
   window.addEventListener('load', aosInit);
 
   /**
-   * Init swiper sliders
+   * Swiper Initialization
    */
   function initSwiper() {
-    document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
-      let config = JSON.parse(
-        swiperElement.querySelector(".swiper-config").innerHTML.trim()
-      );
+    document.querySelectorAll(".init-swiper").forEach(function (swiperElement) {
+      let config = JSON.parse(swiperElement.querySelector(".swiper-config").innerHTML.trim());
 
       if (swiperElement.classList.contains("swiper-tab")) {
         initSwiperWithCustomPagination(swiperElement, config);
@@ -124,79 +110,59 @@
   window.addEventListener("load", initSwiper);
 
   /**
-   * Initiate Pure Counter
-   */
-  new PureCounter();
-
-  /**
-   * Init swiper tabs sliders
+   * Swiper Tabs
    */
   function initSwiperTabs() {
-    document
-      .querySelectorAll(".init-swiper-tabs")
-      .forEach(function(swiperElement) {
-        let config = JSON.parse(
-          swiperElement.querySelector(".swiper-config").innerHTML.trim()
-        );
+    document.querySelectorAll(".init-swiper-tabs").forEach(function (swiperElement) {
+      let config = JSON.parse(swiperElement.querySelector(".swiper-config").innerHTML.trim());
+      const dotsContainer = swiperElement.closest("section").querySelector(".js-custom-dots");
+      if (!dotsContainer) return;
 
-        const dotsContainer = swiperElement
-          .closest("section")
-          .querySelector(".js-custom-dots");
-        if (!dotsContainer) return;
+      const customDots = dotsContainer.querySelectorAll("a");
+      delete config.pagination;
 
-        const customDots = dotsContainer.querySelectorAll("a");
+      const swiperInstance = new Swiper(swiperElement, config);
 
-        // Remove the default pagination setting
-        delete config.pagination;
-
-        const swiperInstance = new Swiper(swiperElement, config);
-
-        swiperInstance.on("slideChange", function() {
-          updateSwiperTabsPagination(swiperInstance, customDots);
-        });
-
-        customDots.forEach((dot, index) => {
-          dot.addEventListener("click", function(e) {
-            e.preventDefault();
-            swiperInstance.slideToLoop(index);
-            updateSwiperTabsPagination(swiperInstance, customDots);
-          });
-        });
-
+      swiperInstance.on("slideChange", function () {
         updateSwiperTabsPagination(swiperInstance, customDots);
       });
+
+      customDots.forEach((dot, index) => {
+        dot.addEventListener("click", function (e) {
+          e.preventDefault();
+          swiperInstance.slideToLoop(index);
+          updateSwiperTabsPagination(swiperInstance, customDots);
+        });
+      });
+
+      updateSwiperTabsPagination(swiperInstance, customDots);
+    });
   }
 
   function updateSwiperTabsPagination(swiperInstance, customDots) {
     const activeIndex = swiperInstance.realIndex;
     customDots.forEach((dot, index) => {
-      if (index === activeIndex) {
-        dot.classList.add("active");
-      } else {
-        dot.classList.remove("active");
-      }
+      dot.classList.toggle("active", index === activeIndex);
     });
   }
 
   window.addEventListener("load", initSwiperTabs);
 
   /**
-   * Initiate glightbox
+   * Initiate GLightbox
    */
-  const glightbox = GLightbox({
-    selector: '.glightbox'
-  });
+  GLightbox({ selector: '.glightbox' });
 
   /**
-   * Init isotope layout and filters
+   * Init isotope layout
    */
-  document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
-    let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
-    let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
-    let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
+  document.querySelectorAll('.isotope-layout').forEach(function (isotopeItem) {
+    const layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
+    const filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
+    const sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
 
     let initIsotope;
-    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
+    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function () {
       initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
         itemSelector: '.isotope-item',
         layoutMode: layout,
@@ -205,19 +171,19 @@
       });
     });
 
-    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
-      filters.addEventListener('click', function() {
-        isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
+    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function (filterEl) {
+      filterEl.addEventListener('click', function () {
+        isotopeItem.querySelector('.isotope-filters .filter-active')?.classList.remove('filter-active');
         this.classList.add('filter-active');
-        initIsotope.arrange({
-          filter: this.getAttribute('data-filter')
-        });
-        if (typeof aosInit === 'function') {
-          aosInit();
-        }
-      }, false);
+        initIsotope.arrange({ filter: this.getAttribute('data-filter') });
+        if (typeof aosInit === 'function') aosInit();
+      });
     });
-
   });
+
+  /**
+   * PureCounter
+   */
+  new PureCounter();
 
 })();
