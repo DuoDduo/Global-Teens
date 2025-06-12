@@ -198,7 +198,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0;
     left: 0;
     width: auto;
-    height: 100vh;
+    
   }
 
   .navmenu ul {
@@ -244,13 +244,13 @@ h1, h2, h3, h4, h5, h6 {
     position: fixed;
     top: 0;
     right: 0;
-    width: 280px;
-    height: 100vh;
+    width: 50%;
+    height: 100%;
     background-color: #fff;
     box-shadow: -2px 0 30px rgba(0, 0, 0, 0.1);
     transform: translateX(100%);
     transition: transform 0.3s ease;
-    z-index: 1050;
+    z-index: 105000000000;
     padding: 1.5rem;
   }
 
@@ -307,6 +307,10 @@ h1, h2, h3, h4, h5, h6 {
   body.nav-open {
     overflow: hidden;
   }
+  body {
+  margin: 20px;
+}
+
 }
 
 /*--------------------------------------------------------------
@@ -318,9 +322,6 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0;
 }
 
-body {
-  margin: 0;
-}
 
 
 /*--------------------------------------------------------------
