@@ -1,52 +1,37 @@
 (function () {
   "use strict";
+ const navToggle = document.getElementById('navToggle');
+  const navClose = document.getElementById('navClose');
+  const navMenu = document.getElementById('navmenu');
+  const navLinks = document.querySelectorAll('#navmenu .nav-link');
+  const body = document.body;
 
-  /**
-   * Apply .scrolled class to the body as the page is scrolled down
-   */
-  function toggleScrolled() {
-    const body = document.querySelector('body');
-    const header = document.querySelector('#header');
-    if (!header.classList.contains('scroll-up-sticky') && !header.classList.contains('sticky-top') && !header.classList.contains('fixed-top')) return;
-    window.scrollY > 100 ? body.classList.add('scrolled') : body.classList.remove('scrolled');
+  // Function to close the menu
+  function closeMenu() {
+    body.classList.remove('mobile-nav-active');
+    navMenu.style.transform = 'translateX(100%)';
   }
 
-  document.addEventListener('scroll', toggleScrolled);
-  window.addEventListener('load', toggleScrolled);
-
-  /**
-   * Slide-Out Mobile Nav Toggle
-   */
-  const navToggleBtn = document.getElementById('navToggle');
-  const navCloseBtn = document.getElementById('navClose');
-  const navmenu = document.getElementById('navmenu');
-
-  if (navToggleBtn && navmenu) {
-    navToggleBtn.addEventListener('click', () => {
-      navmenu.classList.add('show');
-      document.body.classList.add('mobile-nav-active');
+  // Open menu
+  if (navToggle) {
+    navToggle.addEventListener('click', () => {
+      body.classList.add('mobile-nav-active');
+      navMenu.style.transform = 'translateX(0)';
     });
   }
 
-  if (navCloseBtn && navmenu) {
-    navCloseBtn.addEventListener('click', () => {
-      navmenu.classList.remove('show');
-      document.body.classList.remove('mobile-nav-active');
-    });
+  // Close menu via close button
+  if (navClose) {
+    navClose.addEventListener('click', closeMenu);
   }
 
-  // Close mobile nav when a link is clicked
-  document.querySelectorAll('#navmenu a').forEach(link => {
-    link.addEventListener('click', () => {
-      if (document.body.classList.contains('mobile-nav-active')) {
-        navmenu.classList.remove('show');
-        document.body.classList.remove('mobile-nav-active');
-      }
-    });
+  // Close menu when any nav link is clicked
+  navLinks.forEach(link => {
+    link.addEventListener('click', closeMenu);
   });
 
   /**
-   * Preloader
+   * Remove preloader once the page loads
    */
   const preloader = document.querySelector('#preloader');
   if (preloader) {
@@ -56,7 +41,7 @@
   }
 
   /**
-   * Scroll top button
+   * Scroll-to-top button visibility and behavior
    */
   const scrollTop = document.querySelector('.scroll-top');
 
@@ -80,7 +65,44 @@
   document.addEventListener('scroll', toggleScrollTop);
 
   /**
-   * Animation on scroll
+   * Web3Forms submission handler
+   */
+  const form = document.getElementById("contact-form");
+  const result = document.getElementById("result");
+
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const object = Object.fromEntries(formData);
+      const json = JSON.stringify(object);
+
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: json
+      })
+      .then(async (response) => {
+        let json = await response.json();
+        if (response.status === 200) {
+          result.innerHTML = `<div class="alert alert-success">✅ Message sent successfully!</div>`;
+          form.reset();
+        } else {
+          result.innerHTML = `<div class="alert alert-danger">❌ ${json.message}</div>`;
+        }
+      })
+      .catch(() => {
+        result.innerHTML = `<div class="alert alert-danger">❌ Something went wrong!</div>`;
+      });
+    });
+  }
+
+  /**
+   * Initialize AOS (Animate On Scroll)
    */
   function aosInit() {
     AOS.init({
@@ -93,7 +115,7 @@
   window.addEventListener('load', aosInit);
 
   /**
-   * Swiper Initialization
+   * Initialize Swiper sliders
    */
   function initSwiper() {
     document.querySelectorAll(".init-swiper").forEach(function (swiperElement) {
@@ -106,11 +128,10 @@
       }
     });
   }
-
   window.addEventListener("load", initSwiper);
 
   /**
-   * Swiper Tabs
+   * Initialize Swiper sliders with custom dot pagination
    */
   function initSwiperTabs() {
     document.querySelectorAll(".init-swiper-tabs").forEach(function (swiperElement) {
@@ -139,6 +160,9 @@
     });
   }
 
+  /**
+   * Update Swiper tab pagination styling
+   */
   function updateSwiperTabsPagination(swiperInstance, customDots) {
     const activeIndex = swiperInstance.realIndex;
     customDots.forEach((dot, index) => {
@@ -149,12 +173,12 @@
   window.addEventListener("load", initSwiperTabs);
 
   /**
-   * Initiate GLightbox
+   * Initialize GLightbox for lightbox functionality
    */
   GLightbox({ selector: '.glightbox' });
 
   /**
-   * Init isotope layout
+   * Initialize Isotope for filterable grid layouts
    */
   document.querySelectorAll('.isotope-layout').forEach(function (isotopeItem) {
     const layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
@@ -180,10 +204,5 @@
       });
     });
   });
-
-  /**
-   * PureCounter
-   */
-  new PureCounter();
 
 })();
