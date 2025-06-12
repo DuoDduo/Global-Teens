@@ -187,6 +187,9 @@ h6 {
 --------------------------------------------------------------*/
 /* Navmenu - Desktop */
 @media (min-width: 1200px) {
+  body{
+    margin:15px;
+  }
   .navmenu {
     padding: 0;
   }
