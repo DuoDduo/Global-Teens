@@ -30,9 +30,9 @@
     link.addEventListener('click', closeMenu);
   });
 
-  /**
-   * Remove preloader once the page loads
-   */
+
+   //Remove preloader once the page loads
+   
   const preloader = document.querySelector('#preloader');
   if (preloader) {
     window.addEventListener('load', () => {
@@ -40,9 +40,8 @@
     });
   }
 
-  /**
-   * Scroll-to-top button visibility and behavior
-   */
+  //Scroll-to-top button visibility and behavior
+   
   const scrollTop = document.querySelector('.scroll-top');
 
   function toggleScrollTop() {
