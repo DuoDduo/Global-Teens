@@ -30,16 +30,6 @@
     link.addEventListener('click', closeMenu);
   });
 
-
-   //Remove preloader once the page loads
-   
-  const preloader = document.querySelector('#preloader');
-  if (preloader) {
-    window.addEventListener('load', () => {
-      preloader.remove();
-    });
-  }
-
   //Scroll-to-top button visibility and behavior
    
   const scrollTop = document.querySelector('.scroll-top');
@@ -170,38 +160,5 @@
   }
 
   window.addEventListener("load", initSwiperTabs);
-
-  /**
-   * Initialize GLightbox for lightbox functionality
-   */
-  GLightbox({ selector: '.glightbox' });
-
-  /**
-   * Initialize Isotope for filterable grid layouts
-   */
-  document.querySelectorAll('.isotope-layout').forEach(function (isotopeItem) {
-    const layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
-    const filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
-    const sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
-
-    let initIsotope;
-    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function () {
-      initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
-        itemSelector: '.isotope-item',
-        layoutMode: layout,
-        filter: filter,
-        sortBy: sort
-      });
-    });
-
-    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function (filterEl) {
-      filterEl.addEventListener('click', function () {
-        isotopeItem.querySelector('.isotope-filters .filter-active')?.classList.remove('filter-active');
-        this.classList.add('filter-active');
-        initIsotope.arrange({ filter: this.getAttribute('data-filter') });
-        if (typeof aosInit === 'function') aosInit();
-      });
-    });
-  });
 
 })();
